@@ -1,26 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>{{ name }}'s journey list</title>
-    <script>
-        window.onload = function () {
-            var tblEle = document.getElementById("table");
-            var len = tblEle.tBodies[0].rows.length;
-            for (var i = 0; i < len; i++) {
-                if (i % 2 == 0) {
-                    tblEle.tBodies[0].rows[i].style.backgroundColor = "#FAFAFA";
-                } else {
-                    tblEle.tBodies[0].rows[i].style.backgroundColor = "#DDF4E6";
-                }
-            }
-        }
-    </script>
-</head>
+{% extends 'base.html' %}
 
-<body>
-<h2>{{ name }}'s journey list</h2>
-<p>{{ journeys|length }} journeys</p>
+{% block content %}
+{#<body>#}
+<h2><font color="#00A4FF">{{ name }}'s</font> journey list</h2>
+<p>total {{ journeys|length }} journeys</p>
 <table width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13" align="center"
        id="table">
     <tr>
@@ -38,8 +21,4 @@
         </tr>
     {% endfor %}
 </table>
-<footer>
-    <small>@TCD CS7NS6 GROUP2 ; <a href="http://git">Journey Booking</a></small>
-</footer>
-</body>
-</html>
+{% endblock %}
