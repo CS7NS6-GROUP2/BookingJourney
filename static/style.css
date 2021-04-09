@@ -42,17 +42,6 @@ body {
     width: 40px;
 }
 
-.alert {
-    position: relative;
-    padding: 7px;
-    margin: 7px 0;
-    border: 1px solid transparent;
-    color: #004085;
-    background-color: #cce5ff;
-    border-color: #b8daff;
-    border-radius: 5px;
-}
-
 input[type=submit] {
     font-family: inherit;
 }
@@ -88,4 +77,16 @@ footer {
     margin-top: 15px;
     text-align: center;
     padding: 10px;
+}
+
+.alert {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: -150px;
+    border-radius: 0.25rem;
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
 }

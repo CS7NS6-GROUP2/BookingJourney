@@ -1,10 +1,15 @@
-from flask import request, flash, redirect, url_for, render_template, Blueprint
+from flask import request, flash, redirect, url_for, render_template, Blueprint, session
 from flask_login import login_user, login_required, logout_user
 
 from model.journey import JOURNEY
 from model.user import User
 
 login = Blueprint("login", __name__, template_folder='templates')
+
+
+@login.route('/')
+def home():
+    return render_template('home.html', username=session.get('username'))
 
 
 @login.route('/login', methods=['GET', 'POST'])
@@ -20,7 +25,6 @@ def log_in():
         user = User.get_user(username)
         if user is not None and user.validate_password(password):
             login_user(user)
-            flash('Login success.')
             return redirect(url_for('login.index', name=user.username, journeys=JOURNEY))
 
         flash('Invalid username or password.')
@@ -35,6 +39,21 @@ def log_out():
     logout_user()
     flash('Goodbye.')
     return redirect(url_for('index'))
+
+
+@login.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        if request.form['password1'] != request.form['password2']:
+            flash('Please confirm the password!')
+        elif User.get_user(request.form['username']):
+            flash('The username is already existed!')
+        else:
+            # add user
+            # flash("Success！")
+            return redirect(url_for('login.log_in'))
+
+    return render_template('register.html')
 
 
 @login.route('/index/<name>&<journeys>', methods=['GET', 'POST'])
