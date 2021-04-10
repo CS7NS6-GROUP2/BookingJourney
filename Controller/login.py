@@ -1,5 +1,5 @@
-from flask import request, flash, redirect, url_for, render_template, Blueprint, session
-from flask_login import login_user, login_required, logout_user
+from flask import request, flash, redirect, url_for, render_template, Blueprint
+from flask_login import login_user, login_required, logout_user, current_user
 
 from model.journey import JOURNEY
 from model.user import User
@@ -9,7 +9,7 @@ login = Blueprint("login", __name__, template_folder='templates')
 
 @login.route('/')
 def home():
-    return render_template('home.html', username=session.get('username'))
+    return render_template('home.html')
 
 
 @login.route('/login', methods=['GET', 'POST'])
@@ -24,8 +24,8 @@ def log_in():
 
         user = User.get_user(username)
         if user is not None and user.validate_password(password):
-            login_user(user)
-            return redirect(url_for('login.index', name=user.username, journeys=JOURNEY))
+            login_user(user, True)
+            return redirect(url_for('login.index'))
 
         flash('Invalid username or password.')
         return redirect(url_for('login.log_in'))
@@ -38,7 +38,7 @@ def log_in():
 def log_out():
     logout_user()
     flash('Goodbye.')
-    return redirect(url_for('index'))
+    return redirect(url_for('login.log_in'))
 
 
 @login.route('/register', methods=['GET', 'POST'])
@@ -56,7 +56,7 @@ def register():
     return render_template('register.html')
 
 
-@login.route('/index/<name>&<journeys>', methods=['GET', 'POST'])
-# todo journeys list
-def index(name, journeys):
-    return render_template('index.html', name=name, journeys=JOURNEY)
+@login.route('/index', methods=['GET', 'POST'])
+@login_required
+def index():
+    return render_template('index.html', journeys=JOURNEY)

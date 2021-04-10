@@ -8,11 +8,13 @@ from model.user import User
 app = Flask(__name__)
 app.secret_key = 'abc'
 login_manager = LoginManager(app)
+login_manager.init_app(app)
+login_manager.login_view = 'login.log_in'
 
 
 @login_manager.user_loader
-def load_user(user_id):
-    user = User.get(user_id)
+def load_user(userid):
+    user = User.get(userid)
     return user
 
 

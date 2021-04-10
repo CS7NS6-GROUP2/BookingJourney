@@ -1,6 +1,5 @@
 import uuid
 import datetime
-
 from cassandra.cqlengine import columns
 from cassandra.cqlengine.models import Model
 from flask_login import UserMixin
@@ -24,7 +23,7 @@ class User(UserMixin):
     def __init__(self, user):
         self.username = user.get("user_name")
         self.password_hash = user.get("password")
-        self.id = user.get("user_id")
+        self.userid = user.get("user_id")
 
     # class User(Model):
     # user_id = columns.UUID(primary_key=True, default=uuid.uuid4)
@@ -39,7 +38,7 @@ class User(UserMixin):
         return check_password_hash(self.password_hash, password)
 
     def get_id(self):
-        return self.id
+        return self.userid
 
     @staticmethod
     def get_user(username):
@@ -49,10 +48,10 @@ class User(UserMixin):
         return None
 
     @staticmethod
-    def get(user_id):
-        if not user_id:
+    def get(userid):
+        if not userid:
             return None
         for user in USERS:
-            if user.get('id') == user_id:
+            if user.get('user_id') == userid:
                 return User(user)
         return None
