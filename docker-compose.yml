@@ -8,10 +8,37 @@ services:
       - APP_NAME=Journey
     expose:
       - 8080
+    networks:
+      - static-network
 
-  nginx:
-    build: nginx
-    container_name: nginx
+  nginx_01:
+    build: nginx_01
+    container_name: nginx_01
+    volumes:
+      - ./keepalived-master.conf:/etc/keepalived/keepalived.conf
+    networks:
+      static-network:
+        ipv4_address: 172.20.128.2
+    cap_add:
+      - NET_ADMIN
     restart: always
-    ports:
-    - "80:80"
+
+
+  nginx_02:
+    build: nginx_02
+    container_name: nginx_02
+    volumes:
+      - ./keepalived-backup.conf:/etc/keepalived/keepalived.conf
+    networks:
+      static-network:
+        ipv4_address: 172.20.128.3
+    cap_add:
+      - NET_ADMIN
+    restart: always
+
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

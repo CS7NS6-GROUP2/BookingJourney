@@ -15,5 +15,3 @@ RUN pip3 install -r requirements.txt
 
 CMD ["uwsgi", "uwsgi.ini"]
 
-#ENTRYPOINT nginx -g "daemon on;" &&
-
