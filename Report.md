@@ -32,7 +32,7 @@ sudo wget -qO - https://raw.githubusercontent.com/xurui1995/script/main/start.sh
 nodetool status
 ```
 * Result
-
+* ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test1.png?raw=true)
 
 ## Allocation of work
 ## Summary
