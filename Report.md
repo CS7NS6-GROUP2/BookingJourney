@@ -21,7 +21,7 @@ seed_provider:
 listen_address: "your EC2 private IP"
 rpc_address: 0.0.0.0
 broadcast_rpc_address: "your EC2 private IP"
-endpoint_snitch: GossipingPropertyFileSnitch
+endpoint_snitch: Ec2Snitch
 ```
 * Start service
 ```
