@@ -36,7 +36,7 @@ nodetool status
 ### TestCase 2: Replicas of data
 * Check the replicas by `nodetool getendpoints` which can provide the IP addresses or names of replicas that own the partition key. For example, "2030559" is a partition key in admin table
 * As we can see from the results, three replicas were distributed in different machines, and these machines are in different racks.
-
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test2.png?raw=true)
 
 
 ## Allocation of work
