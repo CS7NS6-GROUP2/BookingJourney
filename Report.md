@@ -40,7 +40,9 @@ nodetool status
 
 ### TestCase 3: Reliability of database
 ### TestCase 4: Consistency of data
-
+### TestCase 5: Check the cache
+* Since we did not use `RowCache`, here we only check the `KeyCache` by `nodetool info`, as the results, we can see the hit rates of KeyCache
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5.png?raw=true)
 ## Allocation of work
 ## Summary
 
