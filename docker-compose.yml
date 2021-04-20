@@ -8,6 +8,8 @@ services:
       - APP_NAME=Journey
     expose:
       - 8080
+    ports:
+    - "8001:8080"
 
   flask02:
     build: JourneyBooking
@@ -17,6 +19,8 @@ services:
       - APP_NAME=Journey
     expose:
       - 8080
+    ports:
+    - "8002:8080"
 
   flask03:
     build: JourneyBooking
@@ -26,11 +30,13 @@ services:
       - APP_NAME=Journey
     expose:
       - 8080
-
-
-  nginx:
-    build: nginx
-    container_name: nginx
-    restart: always
     ports:
-    - "80:80"
+    - "8003:8080"
+
+
+#  nginx:
+#    build: nginx
+#    container_name: nginx
+#    restart: always
+#    ports:
+#    - "80:80"
