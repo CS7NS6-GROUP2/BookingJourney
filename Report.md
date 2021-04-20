@@ -38,6 +38,8 @@ nodetool status
 * As we can see from the results, three replicas were distributed in different machines, and these machines are in different racks.
 ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test2.png?raw=true)
 
+### TestCase 3: Reliability of database
+### TestCase 4: Consistency of data
 
 ## Allocation of work
 ## Summary
