@@ -39,6 +39,11 @@ nodetool status
 ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test2.png?raw=true)
 
 ### TestCase 3: Reliability of database
+* Shut down one of the machines that contains the test data
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3-1.png?raw=true)
+* Test if we can retrieve the test data
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3-2.png?raw=true)
+
 ### TestCase 4: Consistency of data
 ### TestCase 5: Check the cache
 * Since we did not use `RowCache`, here we only check the `KeyCache` by `nodetool info`, as the results, we can see the hit rates of KeyCache
