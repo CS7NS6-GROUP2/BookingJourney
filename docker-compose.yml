@@ -1,13 +1,32 @@
 version: '3'
 services:
-  flask:
+  flask01:
     build: JourneyBooking
-    container_name: JourneyBooking
+    container_name: JourneyBooking01
     restart: always
     environment:
       - APP_NAME=Journey
     expose:
       - 8080
+
+  flask02:
+    build: JourneyBooking
+    container_name: JourneyBooking02
+    restart: always
+    environment:
+      - APP_NAME=Journey
+    expose:
+      - 8080
+
+  flask03:
+    build: JourneyBooking
+    container_name: JourneyBooking03
+    restart: always
+    environment:
+      - APP_NAME=Journey
+    expose:
+      - 8080
+
 
   nginx:
     build: nginx
