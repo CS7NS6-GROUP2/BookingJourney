@@ -34,7 +34,7 @@ nodetool status
 * Result
 * ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test1.png?raw=true)
 ### TestCase 2: Replicas of data
-* Check the replicas by `nodetool getendpoints` which can provide the IP addresses or names of replicas that own the partition key. For example, "2030559" is a partition key in admin table
+* Check the replicas by `nodetool getendpoints` which can provide the IP addresses or names of replicas that own the partition key. For example, "20335559" is a partition key in admin table
 * As we can see from the results, three replicas were distributed in different machines, and these machines are in different racks.
 ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test2.png?raw=true)
 
@@ -45,6 +45,15 @@ nodetool status
 ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3-2.png?raw=true)
 
 ### TestCase 4: Consistency of data
+* Check the consistency level
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test4-1.png?raw=true)
+* Check the eventual consistency, two machines update a same row in short interval, the first one changed the 
+name to "admin1", the second one changed it to "admin2", the eventual result should be the last one on both machines. 
+```
+update group2.admin_table set name = 'admin1' where id = 1;
+update group2.admin_table set name = 'admin2' where id = 1;
+```
+* ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test4-2.png?raw=true)
 ### TestCase 5: Check the cache
 * Since we did not use `RowCache`, here we only check the `KeyCache` by `nodetool info`, as the results, we can see the hit rates of KeyCache
 ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5.png?raw=true)
