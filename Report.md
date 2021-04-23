@@ -56,8 +56,10 @@ update group2.admin_table set name = 'admin2' where id = 1;
 ```
 * ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test4-2.png?raw=true)
 ### TestCase 5: Check the cache
-* Since we did not use `RowCache`, here we only check the `KeyCache` by `nodetool info`, as the results, we can see the hit rates of KeyCache
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5.png?raw=true)
+* Here we will test the row cache mechanism, insert a new data, then query that data, we can see the cache is missing
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5-1.png?raw=true)
+* Then, we query it again, we can see the results shows the we hit the cache.
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5-2.png?raw=true)
 ## Allocation of work
 ## Summary
 
