@@ -40,9 +40,10 @@ nodetool status
 
 ### TestCase 3: Reliability of database
 * Shut down one of the machines that contains the test data
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3-1.png?raw=true)
-* Test if we can retrieve the test data
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3-2.png?raw=true)
+* Test if we can retrieve the test data from the left machines
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3.png?raw=true)
+
+
 
 ### TestCase 4: Consistency of data
 * Check the consistency level
