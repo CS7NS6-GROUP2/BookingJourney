@@ -56,6 +56,7 @@ update group2.admin_table set name = 'admin2' where id = 1;
 ```
 * ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test4-2.png?raw=true)
 ### TestCase 5: Check the cache
+* Check the rough cache situation by `nodetool info`
 * We open the tracing, we query the data of id = 20305559 again, we can see the results shows the we hit the cache.
 ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5.png?raw=true)
 
