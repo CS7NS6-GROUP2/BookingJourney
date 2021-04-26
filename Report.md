@@ -1,19 +1,72 @@
-# CS7NS6
+# cs7ns6-groupwork
+
+TCD CS7NS6 Distributed Systems Exercise 2
 
 ## Introduciton
+
+This project aim to implement a 
+
 ## Requirements
+
+We need to implement a global-oriented journey management system that allows drivers to book/cancel journeys. According to the requirement, all road-vehicle drivers are required to prebook every journey that they wish to make, no driver is allowed to start a journey without having received a notification that the requested journey is acceptable.
+
+These require us to provide a high-performance service, it has to meet at least the following requirements (The focus of our system implementation exercise is not the business logic of journey management) :
+
+* This service needs to be scalable. (All journeys required a prebook, the number of users might be very large.)
+
+* The service needs to be highly available. (No driver is allowed to start a journey without having received a notification)
+
+* The service needs to be reliable. (Before starting the journey, the drivers receive a notification that the requested journey is acceptable)
+
+  
+
+  #### Functional requirements-API
+
+  -- prebook_journey(driverId)
+
+  -- confirm_journey(driverId)
+
+  -- cancel_journey(driverId, orderId)
+
+  -- get_journey(driverId)
+
+  
+
+  #### Non-functional requirements
+
+  | Scale               | **1M/s** |
+  | :------------------ | -------- |
+  | **I/O performance** | **ms**   |
+  | **scalability**     | **..**   |
+  | **availability**    | **..**   |
+  | **reliability**     | **..**   |
+  |                     |          |
+
+  
+
 ## Specifications
+
 ## Architecture
+
+  ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/image-architecture.png?raw=true)
+
+
 ## Implementation
+
 ## Test
+
 ### TestCase 1: Scalability of database
+
 * Create a new ubuntu machine on your AWS EC2
 * Install the cassandra environment
+
 ```
 sudo wget -qO - https://raw.githubusercontent.com/xurui1995/script/main/ds.sh | bash
 ```
+
 * Edit config and join the cluster
 * `sudo vim /etc/cassandra/cassandra.yaml `
+
 ```
 seed_provider:
     - class_name: org.apache.cassandra.locator.SimpleSeedProvider
@@ -23,43 +76,56 @@ rpc_address: 0.0.0.0
 broadcast_rpc_address: "your EC2 private IP"
 endpoint_snitch: Ec2Snitch
 ```
+
 * Start service
+
 ```
 sudo wget -qO - https://raw.githubusercontent.com/xurui1995/script/main/start.sh | bash
 ```
+
 * Check the new node status
+
 ```
 nodetool status
 ```
+
 * Result
 * ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test1.png?raw=true)
+
 ### TestCase 2: Replicas of data
+
 * Check the replicas by `nodetool getendpoints` which can provide the IP addresses or names of replicas that own the partition key. For example, "20335559" is a partition key in admin table
 * As we can see from the results, three replicas were distributed in different machines, and these machines are in different racks.
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test2.png?raw=true)
+  ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test2.png?raw=true)
 
 ### TestCase 3: Reliability of database
+
 * Shut down one of the machines that contains the test data
 * Test if we can retrieve the test data from the left machines
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3.png?raw=true)
+  ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3.png?raw=true)
 
 
 
 ### TestCase 4: Consistency of data
+
 * Check the consistency level
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test4-1.png?raw=true)
+  ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test4-1.png?raw=true)
 * Check the eventual consistency, two machines update a same row in short interval, the first one changed the 
-name to "admin1", the second one changed it to "admin2", the eventual result should be the last one on both machines. 
+  name to "admin1", the second one changed it to "admin2", the eventual result should be the last one on both machines. 
+
 ```
 update group2.admin_table set name = 'admin1' where id = 1;
 update group2.admin_table set name = 'admin2' where id = 1;
 ```
+
 * ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test4-2.png?raw=true)
+
 ### TestCase 5: Check the cache
+
 * Check the rough cache situation by `nodetool info`
 * We open the tracing, we query the data of id = 20305559 again, we can see the results shows the we hit the cache.
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5.png?raw=true)
+  ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5.png?raw=true)
 
 ## Allocation of work
-## Summary
 
+## Summary
