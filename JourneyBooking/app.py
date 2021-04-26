@@ -1,4 +1,9 @@
-from flask import Flask
+import json
+import uuid
+
+from cassandra import ConsistencyLevel
+from cassandra.query import BatchStatement, SimpleStatement
+from flask import Flask, jsonify
 from flask_login import LoginManager
 from cassandra.cluster import Cluster
 from Controller.login import *
@@ -12,72 +17,75 @@ login_manager.init_app(app)
 login_manager.login_view = 'login.log_in'
 
 
-cluster = Cluster(["18.205.60.230", "54.210.238.122", "34.239.180.190"])
+
+
+
+
+
+cluster = Cluster(["3.235.245.79", "54.211.80.31"])
 session = cluster.connect('group2')
+
 
 @app.route('/admin_get_info')
 def admin_get_info():
-
-
     admin_id = 20305559
     user_lookup_stmt = session.prepare("SELECT JSON * FROM admin_table WHERE id=?")
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt, [admin_id])
+
 
     # {"id": 20305559, "name": "Rui", "password": "123456"}
     return results.one().json
 
 
 
-# CREATE TABLE admin
-# id int PRIMARY KEY ,
-# name text,
-# password text,
-# ) WITH caching = { 'keys' : 'ALL', 'rows_per_partition' : '20' };
-#
-#
-#
-# CREATE TABLE users(
-# id uuid PRIMARY KEY ,
-# name text,
-# car text,
-# password text,
-# ) WITH caching = { 'keys' : 'ALL', 'rows_per_partition' : '100' };
-#
-# CREATE TABLE IF NOT EXISTS journey_info(
-# id uuid PRIMARY KEY ,
-# name text,
-# ) WITH caching = { 'keys' : 'ALL', 'rows_per_partition' : '120' };
-#
-#
-#
-#
-# CREATE TABLE IF NOT EXISTS journey_ticket (
-# id uuid,
-# name text,
-# available int,
-# PRIMARY KEY (id, name)
-# ) WITH caching = { 'keys' : 'ALL', 'rows_per_partition' : '120' };
-
-@app.route('/login')
-def user_login():
-    id = uuid.uuid1()
+@app.route('/user_register')
+def user_register():
     name = "user1"
     car = "BMW 3"
     password = "123"
-
+    id = uuid.uuid1()
     query = SimpleStatement(
         "INSERT INTO users (id, name, car, password) VALUES (%s, %s, %s, %s)",
         consistency_level=ConsistencyLevel.QUORUM)
     results = session.execute(query,  (id, name, car, password))
+    return results.one().json
 
-    # login
-    user_lookup_stmt = session.prepare("SELECT JSON * FROM users WHERE id=?")
+
+@app.route('/user_auto_login')
+def user_auto_login():
+    sessionId = "4a79c304-a6a9-11eb-9b7c-acde48001122"
+    user_lookup_stmt = session.prepare("SELECT * FROM session WHERE id={}".format(sessionId))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
-    results = session.execute(user_lookup_stmt, [id])
+    results = session.execute(user_lookup_stmt)
+    print(results.one())
+    if None == results.one():
+        return "invaild"
+    return "vaild"
+
+
+@app.route('/user_login')
+def user_login():
+    id = " c85bc2dc-a455-11eb-aca6-acde48001122"
+    password = "123"
+    # login
+    user_lookup_stmt = session.prepare("SELECT password FROM users WHERE id={}".format(id))
+    user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
+    results = session.execute(user_lookup_stmt)
 
     # {"id": "51d1932a-a456-11eb-8231-acde48001122", "car": "BMW 3", "name": "user1", "password": "123"}
-    return results.one().json
+    pwd = results.one().password
+    print(pwd)
+    if pwd != password:
+        return "password wrong"
+
+    sessionId = uuid.uuid1()
+    query = SimpleStatement(
+        "INSERT INTO session (id) VALUES ({}) USING TTL 300 ".format(sessionId),
+        consistency_level=ConsistencyLevel.QUORUM)
+    results = session.execute(query)
+    return str(sessionId)
+
 
 @app.route('/create_journey')
 def create_journey():
@@ -88,8 +96,6 @@ def create_journey():
 
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
     batch.add(SimpleStatement("INSERT INTO journey_info (id, name ) VALUES (%s, %s)"), (id, name))
-    batch.add(SimpleStatement("INSERT INTO journey_ticket (id, name, available ) "
-                              "VALUES (%s, %s, %s)"), (id, name, available))
     result = session.execute(batch)
     print(result.one())
     return "11"
@@ -102,55 +108,92 @@ def get_all_journeys():
     results = session.execute(user_lookup_stmt)
     return jsonify(results.all())
 
-
-
 @app.route('/book_one_ticket')
 def book_one_ticket():
-    journeys_id = "e04c6afa-a558-11eb-8449-acde48001122"
-    user_lookup_stmt = session.prepare("SELECT available FROM journey_ticket where id = {}".format(journeys_id))
+    uid = "e04c6afa-a558-11eb-8449-acde48001122"
+    orderid = uuid.uuid1()
+    journeys = "e04c6afa-a558-11eb-8449-acde48001122"
+    batchId = uuid.uuid1()
+    user_lookup_stmt = session.prepare("insert into orders (orderid, userid, journeyId, batchId, status) VALUES ({}, {}, {}, {}, {}) ".format(
+        orderid, uid, journeys,batchId, 0
+    ))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt)
-    available = results.one()[0]
-    print(available)
-    if available <= 0:
-        return
+    return "--"
+
+@app.route('/book_muti_ticket')
+def book_muti_ticket():
     uid = "e04c6afa-a558-11eb-8449-acde48001122"
-    order_id = uuid.uuid1()
-    batch_id = uuid.uuid1()
-    name = " journey1"
+    journeys = ["e04c6afa-a558-11eb-8449-acde48001128", "e04c6afa-a558-11eb-8449-acde48001129"]
+    batchId = uuid.uuid1()
 
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
-    batch.add(SimpleStatement("UPDATE journey_ticket "
-                              "SET available={}  "
-                              "WHERE id={} AND name='{}'"
-                              .format(available - 1, journeys_id, name)))
+    for journey in journeys:
+        orderid = uuid.uuid1()
+        batch.add(SimpleStatement("insert into orders (orderid, userid, journeyId, batchId, status) VALUES ({}, {}, {}, {}, {}) ".format(
+        orderid, uid, journey,batchId, 0
+    )))
+    result = session.execute(batch)
+    return "--"
 
-    batch.add(SimpleStatement("INSERT INTO ticket_order (id, uid, jid, batch_id, status) VALUES ({}, {}, {}, {},{})".
-                              format(order_id, uid, journeys_id, batch_id, 0)))
-    r = session.execute(batch)
+@app.route('/book_muti_ticket')
+def cancel_muti_ticket():
+    uid = "e04c6afa-a558-11eb-8449-acde48001122"
+    orderids = ["34550d30-a6af-11eb-9a92-acde48001122", "a4d6f046-a6af-11eb-b0db-acde48001122"]
+    batchId = uuid.uuid1()
+
+    batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
+    for orderid in orderids:
+        orderid = uuid.uuid1()
+        batch.add(SimpleStatement("update orders set status = -1 "
+                                       "where orderid = {} and userid = {} ;".format(orderid, uid)))
+    result = session.execute(batch)
     return "--"
 
 
-@app.route('/query_available')
-def query_available():
-    journey_id = "ad9e75c-a491-11eb-8f23-acde48001122"
 
-    user_lookup_stmt = session.prepare("SELECT available FROM journey_ticket where id = ".format(journey_id))
+@app.route('/approve_order')
+def approve_order():
+    uid = "e04c6afa-a558-11eb-8449-acde48001122"
+    orderid = "592d9ff6-a6ae-11eb-a85f-acde48001122"
+    batchId = uuid.uuid1()
+
+    lookup_stmt = session.prepare("update orders set status = 1 "
+                                       " where orderid = {} and userid = {} IF status = 0;".format(orderid, uid))
+    lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
+    result = session.execute(lookup_stmt)
+    return "--"
+
+@app.route('/get_orders_by_user')
+def get_orders_by_user():
+    u_id = "e04c6afa-a558-11eb-8449-acde48001122"
+    user_lookup_stmt = session.prepare("SELECT JSON * FROM orders where uerid = {} and status >= 0 ALLOW FILTERING".format(u_id))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
+    results = session.execute(user_lookup_stmt)
+    l = []
+    for r in results:
+        print(r.json)
+        l.append(r.json)
+    return json.dumps(l)
 
+
+@app.route('/get_all_orders')
+def get_all_orders():
+    user_lookup_stmt = session.prepare("SELECT JSON * FROM journey_ticket")
+    user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt)
     return results.all().json
 
-@app.route('/query_available')
-def get_orders():
-    # TODO
-    u_id = "42658ed0-a566-11eb-ab38-acde48001122"
-    user_lookup_stmt = session.prepare("SELECT JSON * FROM journey_ticket where uid = {} and status >= 0".format(u_id))
+
+@app.route('/cancel_one_order')
+def cancel_one_order():
+    orderid = "592d9ff6-a6ae-11eb-a85f-acde48001122"
+    uid = "e04c6afa-a558-11eb-8449-acde48001122"
+    user_lookup_stmt = session.prepare("update orders set status = -1 "
+                                       "where orderid = {} and userid = {} ;".format(orderid, uid))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt)
-    return results.all().json
-
-
+    return "--"
 
 
 
