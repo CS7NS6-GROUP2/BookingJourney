@@ -113,7 +113,7 @@ In Cassandra, a write is atomic at the row-level, in our system, we provide a fu
 
 ## Test
 
-### TestCase 1: Scalability of database
+### TestCase 1: Database Scalability and Maintainability
 
 * Create a new ubuntu machine on your AWS EC2
 * Install the cassandra environment
@@ -150,7 +150,7 @@ nodetool status
 * Result
 * ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test1.png?raw=true)
 
-### TestCase 2: Replicas of data
+### TestCase 2: Replicas of data and Partition
 
 * Check the replicas by `nodetool getendpoints` which can provide the IP addresses or names of replicas that own the partition key. For example, "20335559" is a partition key in admin table
 * As we can see from the results, three replicas were distributed in different machines, and these machines are in different racks.
@@ -161,7 +161,6 @@ nodetool status
 * Shut down one of the machines that contains the test data
 * Test if we can retrieve the test data from the left machines
   ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test3.png?raw=true)
-
 
 
 ### TestCase 4: Consistency of data
