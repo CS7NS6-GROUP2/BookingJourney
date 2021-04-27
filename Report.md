@@ -195,3 +195,9 @@ update group2.admin_table set name = 'admin2' where id = 1;
 * Working on the Cassandra database (Rui Xu)
 * Working on the keepalived and nigix (Niejun Yin)
 ## Summary
+* Rui Xu
+  * Working on the config of Cassandra, searching for suitable config for our system
+  * Working on the deployment of Cassandra cluster
+  * Writing shell scripts to make the deployment easier
+  * Testing the mechanism of Cassandra
+  * Designing the Cassandra tables
