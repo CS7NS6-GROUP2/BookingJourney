@@ -53,6 +53,64 @@ These require us to provide a high-performance service, it has to meet at least 
 
 ## Implementation
 
+### Sharding and partitioning:
+In Cassandra, when writing or reading data, the nodes in a datacenter are treated as a ring, and each node contains a range of virtual nodes which is token, tehn system use  a consistent hash function to determining how to distribute the data across the nodes in the cluster given the partition key of a partition key. 
+In our system, we build the cluster by using Amazon EC2, we created six instances on the datacenter us-east.
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/ring.png?raw=true)
+![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/status.png?raw=true)
+### Data Scalability and Maintainability
+As we mentioned in the previous part, we can scale vertically by enlarge the token number of a node, and also we can scale horizontally by adding more nodes and datacenters. 
+Two shell scripts are written for building the cassandra environment, which make the cluster easier to manage. The only things we need to do is edit the config file of new machine to add it into cluster.
+
+### Data replication and availability
+In Cassandra, when data come to cassdran, after finding the node position in token ring, it will continue moving around the ring and adding the data to the node according to replica strategy until meet the replica factor requirements.
+The replication factor was set by the following CQL when creating key space.
+```
+CREATE KEYSPACE group2 
+WITH REPLICATION = {'class' : 'NetworkTopologyStrategy', 'us-east' : 3 } 
+AND DURABLE_WRITES = true;
+```
+Here, we set the replication strategy as NetworkTopologyStrategy, and specifies the replia factor is 3 in us-east datacenter(the total machines are 6).
+The NetworkTopologyStrategy will attempt to place replicas on distinct racks by walking the ring clockwise, because the  nodes in the same rack often fail at the same time, so we want the replicas in different racks in our project which can have more probability to avoid failures.
+
+### Partition and fault tolerance
+As menthioned before, we have different racks in our datacenter with a NetworkTopologyStrategy replica strategy, which means when one of rack fails, the database can still provide service, because other racks will not be affected and have the replicas. In addition, we can add more datacenter, but here we hava a limit of aws education account.
+The nodes in cassandra are not follow a master-salve rule, all nodes communicate with each other through a peer-to-peer communication protocol called Gossip Protocol, which can make sure the cluster doesn't hava a single point failure. Besides, the Gossip Protocol also works on failure detection by a periodically ping mechanism.  
+
+### Data consistency
+According to CAP theorem, a distributed system can not simultaneously guarantee consistency, availability and partition tolerance. here, we decided to prioritize consistency over availability, but the consistency, we used the tunable consistency provided by Cassandra, and by setting the consistency level to QUORUM to tradeoff the 
+consistency and availability.
+
+QUORUM is calculated by the following formula.
+```
+quorum = (sum_of_replication_factors / 2) + 1
+```
+In our system, the replication_factors is 3, that means quorum is 2, when writing data, it can guarantee the data at least be written successfully on 2 nodes, when reading the data, it will at least compare results of two replicas, and return the recent version data, for those inconsistent data, a read repair process will help correct the data to improve consistency.
+It was mentioned that, strong consistency can be guaranteed when the following condition is true:
+```
+R + W > N
+```
+R is the consistency level of read operations
+W is the consistency level of write operations
+N is the number of replicas
+Here in our system, we set consistency level to QUORUM so that it meet that requirement.
+
+### Durability
+The write request in Cassandra is appended to the commit log in the disk. This ensures data durability, and the write request is also sent to memtable (a structure stored in the memory), When the memtable is full, the data is flushed to a SSTable on disk and the data in the commit log is purged. If a crash occurs before the memtables are flushed to disk,  the commit log is replayed on restart to recover any lost writes.
+
+### Failure detection and recovery
+As we mentioned before, the nodes in Cassandra communicate by gossip, Once per second, each node contacts 1-3 other nodes asking about the node state and location.
+the Hinted Handoff can help recovery a node when a node comes back online. when a node is unable to receive a write, the write's coordinator node saves the data to be written as a set of hints for the unavailable node. When the unavailable node comes back online, the coordinator node will sent hints to help catch up with write.
+### Caching
+There are two layers of cache in Cassandra, key cache helps C* know where a particular partition begins in the SStables and row cache pulls entire partitions into memory. Firstly the system will try to retrieve data from row rache, then if can not find, it will retrieve data according to key cache.
+Here in our system, we used both of the caches to avoid latency problem by setting the config.
+### Atomicity
+In Cassandra, a write is atomic at the row-level, in our system, we provide a function for booking muti-leg jouney, it will need more than one database writes, we need to guarantee the atomicity, here we achieved that by using the Bacth statement in Cassandra which can ensure atomicity. 
+
+
+
+
+
 ## Test
 
 ### TestCase 1: Scalability of database
