@@ -182,7 +182,16 @@ update group2.admin_table set name = 'admin2' where id = 1;
 * Check the rough cache situation by `nodetool info`
 * We open the tracing, we query the data of id = 20305559 again, we can see the results shows the we hit the cache.
   ![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/test5.png?raw=true)
+  
+### TestCase 6: Test the atomicity
+* Use Batch statement for two update cql with condition,
 
 ## Allocation of work
-
+* Discussing the requirements (All members)
+* Searching for suitable middlewares (All members)
+* Discussing the technique stack and architecture (All members)
+* Working on the distributed session and authentication (Wei Hu)
+* Working on the business logic and API (Youxin Zhou)
+* Working on the Cassandra database (Rui Xu)
+* Working on the keepalived and nigix (Niejun Yin)
 ## Summary
