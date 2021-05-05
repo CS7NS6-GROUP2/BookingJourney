@@ -7,7 +7,7 @@ from model.user import User
 from cassandra import ConsistencyLevel
 from cassandra.query import BatchStatement, SimpleStatement
 from dao import connection
-from dao import get_all_journeys
+from dao import *
 
 login = Blueprint("login", __name__, template_folder='templates')
 
@@ -59,10 +59,7 @@ def register():
             car = request.form['car']
             password = request.form['password1']
             id = uuid.uuid1()
-            query = SimpleStatement(
-                "INSERT INTO users (id, name, car, password) VALUES (%s, %s, %s, %s)",
-                consistency_level=ConsistencyLevel.QUORUM)
-            results = connection.execute(query, (id, name, car, password))
+            insert_user(name, car, password, id)
             flash("You have registered successfully!Please remember your login ID: " + str(id))
             return redirect(url_for('login.log_in'))
     return render_template('register.html')
@@ -72,4 +69,6 @@ def register():
 @login_required
 def index():
     all_journeys = get_all_journeys()
+    print(get_orders_by_user(current_user.id))
     return render_template('index.html', journeys= json.loads(all_journeys))
+
