@@ -25,7 +25,7 @@ session = cluster.connect('group2')
 @app.route('/admin_get_info')
 def admin_get_info():
     admin_id = 20305559
-    user_lookup_stmt = session.prepare("SELECT JSON * FROM admin_table WHERE id=?")
+    user_lookup_stmt = session.prepare("SELECT JSON * FROM admin WHERE id=?")
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt, [admin_id])
 
