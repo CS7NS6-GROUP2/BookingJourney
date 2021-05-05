@@ -69,6 +69,7 @@ def register():
 @login_required
 def index():
     all_journeys = get_all_journeys()
-    get_orders_by_user(current_user.id)
+    if all_journeys is None:
+        return render_template('index.html', journeys="")
     return render_template('index.html', journeys= json.loads(all_journeys))
 

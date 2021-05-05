@@ -9,6 +9,8 @@ cluster = Cluster(['35.172.217.174'])
 connection = cluster.connect('group2')
 
 def jsonarray(results):
+    if len(results.current_rows) == 0:
+        return None
     ans = "["
     for r in results:
         ans += r.json + ","
@@ -32,9 +34,10 @@ def get_all_journeys():
 
 def get_orders_by_user(uid):
     user_lookup_stmt = connection.prepare(
-        "SELECT JSON * FROM orders where userid = {} and status >= 0 ALLOW FILTERING".format(uid))
+        "SELECT JSON * FROM orders where userid = {} and status >= 0 ALLOW FILTERING ;".format(uid))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = connection.execute(user_lookup_stmt)
+
     return jsonarray(results)
 
 
@@ -45,9 +48,6 @@ def get_all_orders():
     return jsonarray(results)
 
 def book_tickets(uid, journeys):
-    uid = "e04c6afa-a558-11eb-8449-acde48001122"
-    journeys = ["c6ee18ba-ad37-11eb-b351-acde48001122"]
-
     batchId = uuid.uuid1()
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
     for journey in journeys:
@@ -61,8 +61,6 @@ def book_tickets(uid, journeys):
 
 
 def cancel_orders(uid, order_ids):
-    uid = "e04c6afa-a558-11eb-8449-acde48001122"
-    order_ids = ["34550d30-a6af-11eb-9a92-acde48001122", "a4d6f046-a6af-11eb-b0db-acde48001122"]
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
     for orderid in order_ids:
         batch.add(SimpleStatement("update orders set status = -1 "
