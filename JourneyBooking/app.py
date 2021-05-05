@@ -1,5 +1,4 @@
 import json
-import uuid
 
 from cassandra import ConsistencyLevel
 from cassandra.query import BatchStatement, SimpleStatement
@@ -54,9 +53,9 @@ def delete_session():
 @app.route('/admin_get_info')
 def admin_get_info():
     admin_id = 20305559
-    user_lookup_stmt = session.prepare("SELECT JSON * FROM admin WHERE id=?")
+    user_lookup_stmt = connection.prepare("SELECT JSON * FROM admin WHERE id=?")
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
-    results = session.execute(user_lookup_stmt, [admin_id])
+    results = connection.execute(user_lookup_stmt, [admin_id])
 
     # {"id": 20305559, "name": "Rui", "password": "123456"}
     return results.one().json
@@ -227,6 +226,7 @@ def cancel_one_order():
 
 @login_manager.user_loader
 def load_user(userid):
+    print(userid)
     user = User.get(userid)
     return user
 

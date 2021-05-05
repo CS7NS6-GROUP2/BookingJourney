@@ -51,8 +51,6 @@ def register():
     if request.method == 'POST':
         if request.form['password1'] != request.form['password2']:
             flash('Please confirm the password!')
-        elif User.get_user(request.form['username']):
-            flash('The username is already existed!')
         else:
             # add user
             name = request.form['username']

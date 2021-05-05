@@ -23,10 +23,13 @@ class User(UserMixin):
 
     @staticmethod
     def get(id):
-        user_lookup_stmt = connection.prepare("SELECT * FROM users WHERE id={}".format(id))
-        user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
-        results = connection.execute(user_lookup_stmt)
-        if results is None:
-            return results
-        ans = results.one()
-        return User(str(ans[0]), ans[1], ans[2], ans[3])
+        try:
+            user_lookup_stmt = connection.prepare("SELECT * FROM users WHERE id={}".format(id))
+            user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
+            results = connection.execute(user_lookup_stmt)
+            if results is None:
+                return results
+            ans = results.one()
+            return User(str(ans[0]), ans[1], ans[2], ans[3])
+        except:
+            return None
