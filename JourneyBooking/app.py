@@ -125,10 +125,17 @@ def create_journey():
 
 @app.route('/get_all_journey')
 def get_all_journeys():
-    user_lookup_stmt = session.prepare("SELECT JSON * FROM journey_info")
+    user_lookup_stmt = connection.prepare("SELECT JSON * FROM journey_info")
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
-    results = session.execute(user_lookup_stmt)
-    return jsonify(results.all())
+    results = connection.execute(user_lookup_stmt)
+    ans = "["
+    for r in results:
+        print(r.json)
+        ans += r.json + ","
+    ans = ans[:-1]
+    ans += ']'
+    print(ans)
+    return ans
 
 
 @app.route('/book_one_ticket')

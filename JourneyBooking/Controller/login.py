@@ -1,3 +1,4 @@
+import json
 import uuid
 from flask import request, flash, redirect, url_for, render_template, Blueprint, session
 from flask_login import login_user, login_required, logout_user, current_user
@@ -6,6 +7,7 @@ from model.user import User
 from cassandra import ConsistencyLevel
 from cassandra.query import BatchStatement, SimpleStatement
 from dao import connection
+from dao import get_all_journeys
 
 login = Blueprint("login", __name__, template_folder='templates')
 
@@ -69,4 +71,5 @@ def register():
 @login.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html', journeys=JOURNEY)
+    all_journeys = get_all_journeys()
+    return render_template('index.html', journeys= json.loads(all_journeys))

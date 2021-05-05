@@ -10,16 +10,16 @@
                        id="table">
                     <tr>
                         <th>Journey_ID</th>
-                        <th>Time</th>
-                        <th>Status</th>
-                        <th>Options</th>
+                        <th>Name</th>
+                        <th>Pre-Booking</th>
+
                     </tr>
                     {% for journey in journeys %}
                         <tr>
-                            <td>{{ journey.journey_id }}</td>
-                            <td>{{ journey.time }}</td>
-                            <td>{{ journey.journey_status }}</td>
-                            <td>--todo--</td>
+                            <td>{{ journey.id }}</td>
+                            <td>{{ journey.name }}</td>
+                            <td>{{ journey.name }}</td>
+                            <td></td>
                         </tr>
                     {% endfor %}
                 </table>
