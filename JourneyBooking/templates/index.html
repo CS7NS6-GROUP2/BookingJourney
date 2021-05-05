@@ -9,12 +9,15 @@
                 <table width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13"
                        align="center"
                        id="table">
+                    <thead>
                     <tr>
                         <th>Journey_ID</th>
                         <th>Name</th>
                         <th>Per-booking<input type="checkbox" name="book" onclick="AllCheck(this.form)"></th>
 
                     </tr>
+                    </thead>
+                    <tbody>
                     {% for journey in journeys %}
                         <tr>
                             <td>{{ journey.id }}</td>
@@ -24,6 +27,7 @@
                             </td>
                         </tr>
                     {% endfor %}
+                    </tbody>
                 </table>
                 <input type="submit" name="sbjourney" onclick="sendDataTo('table')">
             </form>
@@ -54,7 +58,7 @@
                         var tds = tr.cells;
                         var temp = new Array();
                         temp[0] = tds[0].innerHTML;
-                        temp[1] = tds[2].getElementsByTagName("input")[0].value;
+                        temp[1] = tds[1].innerHTML;
                         allData[num] = temp;
                         num++;
                     }
