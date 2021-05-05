@@ -18,11 +18,7 @@ login_manager.login_view = 'login.log_in'
 
 
 
-
-
-
-
-cluster = Cluster(["3.235.245.79", "54.211.80.31"])
+cluster = Cluster(["35.172.217.174"])
 session = cluster.connect('group2')
 
 
@@ -49,7 +45,7 @@ def user_register():
         "INSERT INTO users (id, name, car, password) VALUES (%s, %s, %s, %s)",
         consistency_level=ConsistencyLevel.QUORUM)
     results = session.execute(query,  (id, name, car, password))
-    return results.one().json
+    return "111"
 
 
 @app.route('/user_auto_login')
