@@ -11,9 +11,7 @@ def get_all_journeys():
     results = connection.execute(user_lookup_stmt)
     ans = "["
     for r in results:
-        print(r.json)
         ans += r.json + ","
     ans = ans[:-1]
     ans += ']'
-    print(ans)
     return ans

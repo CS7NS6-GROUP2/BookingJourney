@@ -80,7 +80,6 @@ def user_auto_login():
     user_lookup_stmt = session.prepare("SELECT * FROM session WHERE id={}".format(sessionId))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt)
-    print(results.one())
     if None == results.one():
         return "invaild"
     return "vaild"
@@ -119,7 +118,6 @@ def create_journey():
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
     batch.add(SimpleStatement("INSERT INTO journey_info (id, name ) VALUES (%s, %s)"), (id, name))
     result = session.execute(batch)
-    print(result.one())
     return "11"
 
 
