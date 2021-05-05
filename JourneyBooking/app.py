@@ -80,7 +80,6 @@ def user_auto_login():
     user_lookup_stmt = session.prepare("SELECT * FROM session WHERE id={}".format(sessionId))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt)
-    print(results.one())
     if None == results.one():
         return "invaild"
     return "vaild"
@@ -97,7 +96,6 @@ def user_login():
 
     # {"id": "51d1932a-a456-11eb-8231-acde48001122", "car": "BMW 3", "name": "user1", "password": "123"}
     pwd = results.one().password
-    print(pwd)
     if pwd != password:
         return "password wrong"
 
@@ -119,7 +117,6 @@ def create_journey():
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
     batch.add(SimpleStatement("INSERT INTO journey_info (id, name ) VALUES (%s, %s)"), (id, name))
     result = session.execute(batch)
-    print(result.one())
     return "11"
 
 

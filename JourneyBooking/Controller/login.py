@@ -69,6 +69,6 @@ def register():
 @login_required
 def index():
     all_journeys = get_all_journeys()
-    print(get_orders_by_user(current_user.id))
+    get_orders_by_user(current_user.id)
     return render_template('index.html', journeys= json.loads(all_journeys))
 
