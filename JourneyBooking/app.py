@@ -96,7 +96,6 @@ def user_login():
 
     # {"id": "51d1932a-a456-11eb-8231-acde48001122", "car": "BMW 3", "name": "user1", "password": "123"}
     pwd = results.one().password
-    print(pwd)
     if pwd != password:
         return "password wrong"
 
@@ -151,71 +150,10 @@ def book_one_ticket():
     return "--"
 
 
-@app.route('/book_muti_ticket')
-def book_muti_ticket():
-    uid = "e04c6afa-a558-11eb-8449-acde48001122"
-    journeys = ["e04c6afa-a558-11eb-8449-acde48001128", "e04c6afa-a558-11eb-8449-acde48001129"]
-    batchId = uuid.uuid1()
-
-    batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
-    for journey in journeys:
-        orderid = uuid.uuid1()
-        batch.add(SimpleStatement(
-            "insert into orders (orderid, userid, journeyId, batchId, status) VALUES ({}, {}, {}, {}, {}) ".format(
-                orderid, uid, journey, batchId, 0
-            )))
-    result = session.execute(batch)
-    return "--"
 
 
-@app.route('/book_muti_ticket')
-def cancel_muti_ticket():
-    uid = "e04c6afa-a558-11eb-8449-acde48001122"
-    orderids = ["34550d30-a6af-11eb-9a92-acde48001122", "a4d6f046-a6af-11eb-b0db-acde48001122"]
-    batchId = uuid.uuid1()
-
-    batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
-    for orderid in orderids:
-        orderid = uuid.uuid1()
-        batch.add(SimpleStatement("update orders set status = -1 "
-                                  "where orderid = {} and userid = {} ;".format(orderid, uid)))
-    result = session.execute(batch)
-    return "--"
 
 
-@app.route('/approve_order')
-def approve_order():
-    uid = "e04c6afa-a558-11eb-8449-acde48001122"
-    orderid = "592d9ff6-a6ae-11eb-a85f-acde48001122"
-    batchId = uuid.uuid1()
-
-    lookup_stmt = session.prepare("update orders set status = 1 "
-                                  " where orderid = {} and userid = {} IF status = 0;".format(orderid, uid))
-    lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
-    result = session.execute(lookup_stmt)
-    return "--"
-
-
-@app.route('/get_orders_by_user')
-def get_orders_by_user():
-    u_id = "e04c6afa-a558-11eb-8449-acde48001122"
-    user_lookup_stmt = session.prepare(
-        "SELECT JSON * FROM orders where uerid = {} and status >= 0 ALLOW FILTERING".format(u_id))
-    user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
-    results = session.execute(user_lookup_stmt)
-    l = []
-    for r in results:
-        print(r.json)
-        l.append(r.json)
-    return json.dumps(l)
-
-
-@app.route('/get_all_orders')
-def get_all_orders():
-    user_lookup_stmt = session.prepare("SELECT JSON * FROM journey_ticket")
-    user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
-    results = session.execute(user_lookup_stmt)
-    return results.all().json
 
 
 @app.route('/cancel_one_order')
