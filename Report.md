@@ -56,9 +56,12 @@ These require us to provide a high-performance service, it has to meet at least 
 ### Sharding and partitioning:
 In Cassandra, when writing or reading data, the nodes in a datacenter are treated as a ring, and each node contains a range of virtual nodes which is token, tehn system use  a consistent hash function to determining how to distribute the data across the nodes in the cluster given the partition key of a partition key. 
 In our system, we build the cluster by using Amazon EC2, we created six instances on the datacenter us-east.
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/ring.png?raw=true)
-![](https://github.com/CS7NS6-GROUP2/BookingJourney/blob/main/images/status.png?raw=true)
-### Data Scalability and Maintainability
+
+<img src="/Users/jump/Code/Py/CS7NS6/CS7NS6/images/ring.png" style="zoom:50%;" />
+![status](/Users/jump/Code/Py/CS7NS6/CS7NS6/images/status.png)
+
+Data Scalability and Maintainability
+
 As we mentioned in the previous part, we can scale vertically by enlarge the token number of a node, and also we can scale horizontally by adding more nodes and datacenters. 
 Two shell scripts are written for building the cassandra environment, which make the cluster easier to manage. The only things we need to do is edit the config file of new machine to add it into cluster.
 

@@ -3,23 +3,52 @@ import uuid
 
 from cassandra import ConsistencyLevel
 from cassandra.query import BatchStatement, SimpleStatement
-from flask import Flask, jsonify
+from cassandra_flask_sessions import AbstractConnectionProvider, CassandraSessionInterface
+from flask import Flask, jsonify, session
 from flask_login import LoginManager
 from cassandra.cluster import Cluster
 from Controller.login import *
 from Controller.book import *
 from model.user import User
+from dao import connection
+
+
+class ConnectionProvider(AbstractConnectionProvider):
+
+    def __init__(self):
+        self.__connection = connection
+
+    def get_connection(self):
+        return self.__connection
+
 
 app = Flask(__name__)
 app.secret_key = 'abc'
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login.log_in'
+app.session_interface = CassandraSessionInterface(ConnectionProvider())
 
 
+# cluster = Cluster(["35.172.217.174"])
+# session = cluster.connect('group2')
 
-cluster = Cluster(["35.172.217.174"])
-session = cluster.connect('group2')
+
+@app.route('/set/<name>')
+def set_session(name):
+    session['name'] = name
+    return 'ok'
+
+
+@app.route('/get')
+def get_session():
+    return json.dumps(dict(session))
+
+
+@app.route('/del')
+def delete_session():
+    session.clear()
+    return 'ok'
 
 
 @app.route('/admin_get_info')
@@ -29,10 +58,8 @@ def admin_get_info():
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt, [admin_id])
 
-
     # {"id": 20305559, "name": "Rui", "password": "123456"}
     return results.one().json
-
 
 
 @app.route('/user_register')
@@ -44,7 +71,7 @@ def user_register():
     query = SimpleStatement(
         "INSERT INTO users (id, name, car, password) VALUES (%s, %s, %s, %s)",
         consistency_level=ConsistencyLevel.QUORUM)
-    results = session.execute(query,  (id, name, car, password))
+    results = session.execute(query, (id, name, car, password))
     return "111"
 
 
@@ -104,18 +131,21 @@ def get_all_journeys():
     results = session.execute(user_lookup_stmt)
     return jsonify(results.all())
 
+
 @app.route('/book_one_ticket')
 def book_one_ticket():
     uid = "e04c6afa-a558-11eb-8449-acde48001122"
     orderid = uuid.uuid1()
     journeys = "e04c6afa-a558-11eb-8449-acde48001122"
     batchId = uuid.uuid1()
-    user_lookup_stmt = session.prepare("insert into orders (orderid, userid, journeyId, batchId, status) VALUES ({}, {}, {}, {}, {}) ".format(
-        orderid, uid, journeys,batchId, 0
-    ))
+    user_lookup_stmt = session.prepare(
+        "insert into orders (orderid, userid, journeyId, batchId, status) VALUES ({}, {}, {}, {}, {}) ".format(
+            orderid, uid, journeys, batchId, 0
+        ))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt)
     return "--"
+
 
 @app.route('/book_muti_ticket')
 def book_muti_ticket():
@@ -126,11 +156,13 @@ def book_muti_ticket():
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
     for journey in journeys:
         orderid = uuid.uuid1()
-        batch.add(SimpleStatement("insert into orders (orderid, userid, journeyId, batchId, status) VALUES ({}, {}, {}, {}, {}) ".format(
-        orderid, uid, journey,batchId, 0
-    )))
+        batch.add(SimpleStatement(
+            "insert into orders (orderid, userid, journeyId, batchId, status) VALUES ({}, {}, {}, {}, {}) ".format(
+                orderid, uid, journey, batchId, 0
+            )))
     result = session.execute(batch)
     return "--"
+
 
 @app.route('/book_muti_ticket')
 def cancel_muti_ticket():
@@ -142,10 +174,9 @@ def cancel_muti_ticket():
     for orderid in orderids:
         orderid = uuid.uuid1()
         batch.add(SimpleStatement("update orders set status = -1 "
-                                       "where orderid = {} and userid = {} ;".format(orderid, uid)))
+                                  "where orderid = {} and userid = {} ;".format(orderid, uid)))
     result = session.execute(batch)
     return "--"
-
 
 
 @app.route('/approve_order')
@@ -155,15 +186,17 @@ def approve_order():
     batchId = uuid.uuid1()
 
     lookup_stmt = session.prepare("update orders set status = 1 "
-                                       " where orderid = {} and userid = {} IF status = 0;".format(orderid, uid))
+                                  " where orderid = {} and userid = {} IF status = 0;".format(orderid, uid))
     lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     result = session.execute(lookup_stmt)
     return "--"
 
+
 @app.route('/get_orders_by_user')
 def get_orders_by_user():
     u_id = "e04c6afa-a558-11eb-8449-acde48001122"
-    user_lookup_stmt = session.prepare("SELECT JSON * FROM orders where uerid = {} and status >= 0 ALLOW FILTERING".format(u_id))
+    user_lookup_stmt = session.prepare(
+        "SELECT JSON * FROM orders where uerid = {} and status >= 0 ALLOW FILTERING".format(u_id))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = session.execute(user_lookup_stmt)
     l = []
@@ -192,7 +225,6 @@ def cancel_one_order():
     return "--"
 
 
-
 @login_manager.user_loader
 def load_user(userid):
     user = User.get(userid)
@@ -205,4 +237,3 @@ app.register_blueprint(book)
 
 if __name__ == '__main__':
     app.run()
-
