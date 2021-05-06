@@ -68,11 +68,13 @@ def add_journey():
     return redirect(url_for('admin.journey'))
 
 
-@admin.route('/management/approve')
+@admin.route('/management/approve', methods=['POST'], strict_slashes=False)
 def approve():
-    return "approve"
+    data = request
+    print(data)
+    return {}
 
 
-@admin.route('/management/del_user')
+@admin.route('/management/del_user', methods=['POST'], strict_slashes=False)
 def del_user():
     return "del"

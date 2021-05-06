@@ -26,16 +26,16 @@
                             <td>{{ order.userid |safe }}</td>
                             <td>{{ order.status |safe }}</td>
                             <td>
-                                 {% if order.status == "pending" %}
-                                <label class="checkbox-label">
-                                    <a href="approve" onclick="" class="form_btnB"
-                                       style="width:30px;color:#292A2D;vertical-align:middle;">Approve</a>
-                                </label>
-                                <label class="checkbox-label">
-                                    <a href="approve)" onclick="" class="form_btnB"
-                                       style="width:30px;color:#292A2D;vertical-align:middle;">Reject</a>
-                                </label>
-                                {%  endif %}
+                                {% if order.status == "pending" %}
+                                    <label class="checkbox-label">
+                                        <a href="javascript:void(0)" onclick="approve({{ order }})" class="form_btnB"
+                                           style="width:30px;color:#292A2D;vertical-align:middle;">Approve</a>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <a href="javascript:void(0)" onclick="reject({{ order }})" class="form_btnB"
+                                           style="width:30px;color:#292A2D;vertical-align:middle;">Reject</a>
+                                    </label>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -56,32 +56,29 @@
             selectState = !selectState;
         }
 
-        function sendDataTo(id) {
-            var inputs = document.getElementById(id).getElementsByTagName("input");
-            var allData = new Array();
-            var num = 0;
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].type == "checkbox") {
-                    if (inputs[i].checked) {
-                        var checkRow = inputs[i];
-                        var tr = checkRow.parentNode.parentNode;
-                        var tds = tr.cells;
-                        var temp = new Array();
-                        temp[0] = tds[2].innerHTML;
-                        temp[1] = tds[0].innerHTML;
-                        allData[num] = temp;
-                        num++;
-                    }
-                }
-            }
-            console.log(allData);
-
+        function approve(order) {
             $.ajax({
                 type: "POST",
-                url: "/management/booking/approve",
+                url: "/management/approve",
                 contentType: "application/json",
                 dataType: "json",
-                data: JSON.stringify({approvalList: allData}),
+                data: order,
+                success: function () {
+                    alert("ok");
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        }
+
+        function reject(order) {
+            $.ajax({
+                type: "POST",
+                url: "/management/reject",
+                contentType: "application/json",
+                dataType: "json",
+                data: order,
                 success: function () {
                     alert("ok");
                 },
