@@ -1,0 +1,25 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+    <div class="w3-container">
+    <h2> <br> <br></h2>
+        <div class="w3-margin-top">
+            <form method="post" action="admin.add" enctype="multipart/form-data" id="form">
+                <table class="table-import" style="width:100%;">
+                    <tr>
+                        <th>Journey name:</th>
+                        <td>
+                            <input type="text" name="source" style="width: 450px;" required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="height: 35px;">
+                            <input type="submit" name="submit_btn" id="button" value="ADD"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

@@ -54,22 +54,9 @@ def approve():
     return render_template('booking_manage.html', orders=json.loads(json.dumps(python_object, indent=2)))
 
 
-@admin.route('/management/booking/approve',methods=['POST'], strict_slashes=False)
-def approve_booking():
-    data = request.data.decode('UTF-8')
-    journeys = json.loads(data)["approvalList"]
-    d = {}
-    for list in journeys:
-        uid = list[0]
-        x = list[1].split("<br>")
-        if uid not in d:
-            d[uid] = []
-
-        for orderId in x:
-            d[uid].append(orderId)
-    print(d)
-    approve_orders(d)
-    return "{}"
+@admin.route('/management/add')
+def add():
+    return render_template('add.html')
 #
 #
 # @admin.route('/create_journey')
