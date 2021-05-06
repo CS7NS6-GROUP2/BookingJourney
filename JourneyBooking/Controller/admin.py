@@ -2,6 +2,7 @@ import json
 from flask import Blueprint
 from flask import request, flash, redirect, url_for, render_template, Blueprint, session
 from dao import *
+import re
 
 admin = Blueprint("admin", __name__, template_folder='templates')
 
@@ -53,7 +54,7 @@ def booking():
             counts[item["batchid"]] = len(l)
             l.append(item)
 
-    return render_template('booking_manage.html', orders=json.loads(json.dumps(python_object, indent=2)))
+    return render_template('booking_manage.html', orders=json.loads(json.dumps(l, indent=2)))
 
 
 @admin.route('/management/add')
@@ -70,10 +71,23 @@ def add_journey():
 
 @admin.route('/management/approve', methods=['POST'], strict_slashes=False)
 def approve():
-    data = request
+    data = request.data.decode('UTF-8')
     print(data)
+    l = re.split('=|&',data)
+    orders = l[1].split('%3C%2Fbr%3E')
+    uid = l[3]
+    approve_orders(uid, orders)
     return {}
 
+@admin.route('/management/reject', methods=['POST'], strict_slashes=False)
+def reject():
+    data = request.data.decode('UTF-8')
+    print(data)
+    l = re.split('=|&',data)
+    orders = l[1].split('%3C%2Fbr%3E')
+    uid = l[3]
+    cancel_orders(uid, orders)
+    return {}
 
 @admin.route('/management/del_user', methods=['POST'], strict_slashes=False)
 def del_user():
