@@ -1,0 +1,25 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+    <!-- Header -->
+    <div class="w3-display-middle w3-margin-top w3-center">
+        <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>System</b></span>
+            <span class="w3-hide-small w3-text-light-grey">Management Center</span></h1>
+    </div>
+    <script languange="JavaScript">
+        var password=""
+        password=prompt('Require the Admin password:','');
+        function custom_close()
+        {
+            window.opener=null;
+            window.open('','_self');
+            window.close();
+        }
+        if  (password !='123456')
+            {alert("Verification failed!")
+
+            custom_close();
+            window.location.href='/booking_manage';
+            }
+</script>
+{% endblock %}

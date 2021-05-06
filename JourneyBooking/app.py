@@ -6,6 +6,8 @@ from cassandra_flask_sessions import AbstractConnectionProvider, CassandraSessio
 from flask import Flask, jsonify, session
 from flask_login import LoginManager
 from cassandra.cluster import Cluster
+
+from Controller.admin import *
 from Controller.login import *
 from Controller.book import *
 from model.user import User
@@ -177,6 +179,7 @@ def load_user(userid):
 # Register Blueprints
 app.register_blueprint(login)
 app.register_blueprint(book)
+app.register_blueprint(admin)
 
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,85 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+    <div class="w3-container">
+        <h2>journey list</h2>
+        <div class="w3-margin-top">
+            <p>total {{ journeys|length }} journeys</p>
+            <form>
+                <table width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13"
+                       align="center"
+                       id="table">
+                    <thead>
+                    <tr>
+                        <th>Journey_ID</th>
+                        <th>Name</th>
+                        <th>Per-booking<input type="checkbox" name="book" onclick="AllCheck(this.form)"></th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for journey in journeys %}
+                        <tr>
+                            <td>{{ journey.id }}</td>
+                            <td>{{ journey.name }}</td>
+                            <td>
+                                <input type="checkbox" name="cbjourney">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <input type="submit" name="sbjourney" onclick="sendDataTo('table')">
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        var selectState = false;
+
+        function AllCheck(thisform) {
+            for (var i = 0; i < thisform.elements.length; i++) {
+                var checkbox = thisform.elements[i];
+                checkbox.checked = !selectState;
+            }
+            selectState = !selectState;
+        }
+
+        function sendDataTo(id) {
+            var inputs = document.getElementById(id).getElementsByTagName("input");
+            var allData = new Array();
+            var num = 0;
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].type == "checkbox") {
+                    if (inputs[i].checked) {
+                        var checkRow = inputs[i];
+                        var tr = checkRow.parentNode.parentNode;
+                        var tds = tr.cells;
+                        var temp = new Array();
+                        temp[0] = tds[0].innerHTML;
+                        temp[1] = tds[1].innerHTML;
+                        allData[num] = temp;
+                        num++;
+                    }
+                }
+            }
+            console.log(allData);
+
+            $.ajax({
+                type: "POST",
+                url: "/book_journey",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({journeyList: allData}),
+                success: function () {
+                    alert("ok");
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        }
+    </script>
+
+{% endblock %}

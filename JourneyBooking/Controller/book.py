@@ -3,22 +3,8 @@ import json
 from flask import Blueprint
 from flask import request, flash, redirect, url_for, render_template, Blueprint, session
 from flask_login import current_user
-
 from dao import *
-
 book = Blueprint("book", __name__, template_folder='templates')
-
-
-@book.route('/admin_approve')
-def admin_approve():
-    return 'aaa'
-
-
-@book.route('/create_journey')
-def admin_create_journey():
-    name = ""
-    create_journey(name)
-    return "{}"
 
 
 @book.route('/my_journeys')
