@@ -31,13 +31,17 @@ def get_all_journeys():
     results = connection.execute(user_lookup_stmt)
     return jsonarray(results)
 
+def get_all_users():
+    user_lookup_stmt = connection.prepare("SELECT JSON * FROM users")
+    user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
+    results = connection.execute(user_lookup_stmt)
+    return jsonarray(results)
 
 def get_orders_by_user(uid):
     user_lookup_stmt = connection.prepare(
         "SELECT JSON * FROM orders where userid = {} and status >= 0 ALLOW FILTERING ;".format(uid))
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = connection.execute(user_lookup_stmt)
-
     return jsonarray(results)
 
 
