@@ -11,5 +11,5 @@ pip==21.0.1
 setuptools==54.2.0
 six==1.15.0
 uWSGI==2.0.19.1
-
+cassandra_flask_sessions==0.6.0
 
