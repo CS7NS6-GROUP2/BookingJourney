@@ -4,6 +4,7 @@ from flask import Blueprint
 from flask import request, flash, redirect, url_for, render_template, Blueprint, session
 from flask_login import current_user
 from dao import *
+
 book = Blueprint("book", __name__, template_folder='templates')
 
 
@@ -12,7 +13,7 @@ def my_journeys():
     js = get_orders_by_user(current_user.id)
     print(js is None)
     if js is None:
-        return render_template('myjourneys.html', orders = "")
+        return render_template('myjourneys.html', orders="")
 
     python_object = json.loads(js)
     counts = dict()
@@ -25,9 +26,9 @@ def my_journeys():
         if item["batchid"] in counts:
             index = counts[item["batchid"]]
             l[index]["orderid"] = l[index]["orderid"] + "</br>"
-            l[index]["orderid"] =  l[index]["orderid"] + item["orderid"]
-            l[index]["journeyid"] =  l[index]["journeyid"] + "</br>"
-            l[index]["journeyid"] =  l[index]["journeyid"] + item["journeyid"]
+            l[index]["orderid"] = l[index]["orderid"] + item["orderid"]
+            l[index]["journeyid"] = l[index]["journeyid"] + "</br>"
+            l[index]["journeyid"] = l[index]["journeyid"] + item["journeyid"]
         else:
             counts[item["batchid"]] = len(l)
             l.append(item)
@@ -35,7 +36,7 @@ def my_journeys():
     return render_template('myjourneys.html', orders=json.loads(json.dumps(python_object, indent=2)))
 
 
-@book.route('/book_journey',methods=['POST'], strict_slashes=False)
+@book.route('/book_journey', methods=['POST'], strict_slashes=False)
 def book_journey():
     data = request.data.decode('UTF-8')
     journeys = json.loads(data)["journeyList"]
@@ -45,13 +46,13 @@ def book_journey():
     book_tickets(current_user.id, ids)
     return "{}"
 
-@book.route('/cancel_journey',methods=['POST'], strict_slashes=False)
+
+@book.route('/cancel_journey', methods=['POST'], strict_slashes=False)
 def cancel_booking():
     uid = current_user.id
     data = request.data.decode('UTF-8')
     journeys = json.loads(data)["journeyList"]
     ids = []
-
 
     for list in journeys:
         x = list[0].split("<br>")

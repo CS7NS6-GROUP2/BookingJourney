@@ -4,32 +4,42 @@
     <div class="w3-container">
         <h2>journey list</h2>
         <div class="w3-margin-top">
-            <p>total {{orders|length }} journeys</p>
+            <p>total {{ orders|length }} booking</p>
             <form>
                 <table width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13"
                        align="center"
                        id="table">
                     <tr>
-                        <th><pre>OrderId</pre></th>
+                        <th>
+                            <pre>OrderId</pre>
+                        </th>
                         <th>JourneyId</th>
                         <th>UserId</th>
                         <th>Status</th>
-                        <th>Approve<input type="checkbox" name="book" onclick="AllCheck(this.form)"></th>
+                        <th>Operation</th>
 
                     </tr>
                     {% for order in orders %}
                         <tr>
-                            <td>{{ order.orderid |safe}}</td>
-                            <td>{{ order.journeyid |safe}}</td>
-                             <td>{{ order.userid |safe}}</td>
+                            <td>{{ order.orderid |safe }}</td>
+                            <td>{{ order.journeyid |safe }}</td>
+                            <td>{{ order.userid |safe }}</td>
                             <td>{{ order.status |safe }}</td>
                             <td>
-                                <input type="checkbox" name="cbjourney">
+                                 {% if order.status == pending %}
+                                <label class="checkbox-label">
+                                    <a href="approve" onclick="" class="form_btnB"
+                                       style="width:30px;color:#292A2D;vertical-align:middle;">Approve</a>
+                                </label>
+                                <label class="checkbox-label">
+                                    <a href="approve)" onclick="" class="form_btnB"
+                                       style="width:30px;color:#292A2D;vertical-align:middle;">Reject</a>
+                                </label>
+                                {%  endif %}
                             </td>
                         </tr>
                     {% endfor %}
                 </table>
-                <input type="submit" name="sbjourney" onclick="sendDataTo('table')">
             </form>
         </div>
     </div>

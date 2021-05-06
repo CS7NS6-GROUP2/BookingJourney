@@ -2,9 +2,9 @@
 
 {% block content %}
     <div class="w3-container">
-        <h2>journey list</h2>
+        <h2>User list</h2>
         <div class="w3-margin-top">
-            <p>total {{ users|length }} journeys</p>
+            <p>total {{ users|length }} users</p>
             <form>
                 <table width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13"
                        align="center"
@@ -14,6 +14,7 @@
                         <th>UserId</th>
                         <th>UserName</th>
                         <th>Car</th>
+                        <th>Operation</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -22,6 +23,12 @@
                             <td>{{ user.id }}</td>
                             <td>{{ user.name }}</td>
                             <td>{{ user.car }}</td>
+                            <td>
+                                <label class="checkbox-label">
+                                    <a href="del_user" onclick="" class="form_btnB"
+                                       style="width:30px;color:#292A2D;vertical-align:middle;">Delete</a>
+                                </label>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>

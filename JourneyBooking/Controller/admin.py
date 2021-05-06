@@ -16,20 +16,22 @@ def journey():
     all_journeys = get_all_journeys()
     if all_journeys is None:
         return render_template('Journey_manage.html', journeys="")
-    return render_template('Journey_manage.html', journeys= json.loads(all_journeys))
+    return render_template('Journey_manage.html', journeys=json.loads(all_journeys))
+
 
 @admin.route('/management/users', methods=['GET', 'POST'])
 def users():
     all_users = get_all_users()
     if all_users is None:
         return render_template('user_manage.html', journeys="")
-    return render_template('user_manage.html', users= json.loads(all_users))
+    return render_template('user_manage.html', users=json.loads(all_users))
+
 
 @admin.route('/management/booking')
-def approve():
+def booking():
     js = get_all_orders()
     if js is None:
-        return render_template('booking_manage.html', orders = "")
+        return render_template('booking_manage.html', orders="")
 
     python_object = json.loads(js)
     counts = dict()
@@ -44,9 +46,9 @@ def approve():
         if item["batchid"] in counts:
             index = counts[item["batchid"]]
             l[index]["orderid"] = l[index]["orderid"] + "</br>"
-            l[index]["orderid"] =  l[index]["orderid"] + item["orderid"]
-            l[index]["journeyid"] =  l[index]["journeyid"] + "</br>"
-            l[index]["journeyid"] =  l[index]["journeyid"] + item["journeyid"]
+            l[index]["orderid"] = l[index]["orderid"] + item["orderid"]
+            l[index]["journeyid"] = l[index]["journeyid"] + "</br>"
+            l[index]["journeyid"] = l[index]["journeyid"] + item["journeyid"]
         else:
             counts[item["batchid"]] = len(l)
             l.append(item)
@@ -57,10 +59,20 @@ def approve():
 @admin.route('/management/add')
 def add():
     return render_template('add.html')
-#
-#
-# @admin.route('/create_journey')
-# def admin_create_journey():
-#     name = ""
-#     create_journey(name)
-#     return "{}"
+
+
+@admin.route('/management/add_journey', methods=['POST'], strict_slashes=False)
+def add_journey():
+    name = request.form['new_journey']
+    create_journey(name)
+    return redirect(url_for('admin.journey'))
+
+
+@admin.route('/management/approve')
+def approve():
+    return "approve"
+
+
+@admin.route('/management/del_user')
+def del_user():
+    return "del"
