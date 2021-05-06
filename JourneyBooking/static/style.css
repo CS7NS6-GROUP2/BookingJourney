@@ -86,3 +86,21 @@ footer {
     background-color: #cce5ff;
     border-color: #b8daff;
 }
+
+.sel_btn {
+    height: 21px;
+    line-height: 21px;
+    padding: 0 11px;
+    background: #02bafa;
+    border: 1px #26bbdb solid;
+    border-radius: 3px;
+    /*color: #fff;*/
+    display: inline-block;
+    text-decoration: none;
+    font-size: 12px;
+    outline: none;
+}
+
+.ch_cls {
+    background: #e4e4e4;
+}

@@ -22,6 +22,11 @@ def journey():
 @admin.route('/admin_approve')
 def approve():
     return 'aaa'
+
+
+@admin.route('/management/add')
+def add():
+    return render_template('add.html')
 #
 #
 # @admin.route('/create_journey')
