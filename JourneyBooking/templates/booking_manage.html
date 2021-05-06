@@ -26,7 +26,7 @@
                             <td>{{ order.userid |safe }}</td>
                             <td>{{ order.status |safe }}</td>
                             <td>
-                                 {% if order.status == pending %}
+                                 {% if order.status == "pending" %}
                                 <label class="checkbox-label">
                                     <a href="approve" onclick="" class="form_btnB"
                                        style="width:30px;color:#292A2D;vertical-align:middle;">Approve</a>
