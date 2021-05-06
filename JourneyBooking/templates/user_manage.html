@@ -4,32 +4,28 @@
     <div class="w3-container">
         <h2>journey list</h2>
         <div class="w3-margin-top">
-            <p>total {{ journeys|length }} journeys</p>
+            <p>total {{ users|length }} journeys</p>
             <form>
                 <table width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13"
                        align="center"
                        id="table">
                     <thead>
                     <tr>
-                        <th>Journey_ID</th>
-                        <th>Name</th>
-                        <th>Per-booking<input type="checkbox" name="book" onclick="AllCheck(this.form)"></th>
-
+                        <th>UserId</th>
+                        <th>UserName</th>
+                        <th>Car</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for journey in journeys %}
+                    {% for user in users %}
                         <tr>
-                            <td>{{ journey.id }}</td>
-                            <td>{{ journey.name }}</td>
-                            <td>
-                                <input type="checkbox" name="cbjourney">
-                            </td>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.car }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
-                <input type="submit" name="sbjourney" onclick="sendDataTo('table')">
             </form>
         </div>
     </div>

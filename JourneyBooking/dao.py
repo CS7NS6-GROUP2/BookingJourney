@@ -46,7 +46,7 @@ def get_orders_by_user(uid):
 
 
 def get_all_orders():
-    user_lookup_stmt = connection.prepare("SELECT JSON * FROM journey_ticket")
+    user_lookup_stmt = connection.prepare("SELECT JSON * FROM orders")
     user_lookup_stmt.consistency_level = ConsistencyLevel.QUORUM
     results = connection.execute(user_lookup_stmt)
     return jsonarray(results)
@@ -73,13 +73,12 @@ def cancel_orders(uid, order_ids):
     return result
 
 
-def approve_orders(uid, order_ids):
-    uid = "e04c6afa-a558-11eb-8449-acde48001122"
-    order_ids = ["34550d30-a6af-11eb-9a92-acde48001122", "a4d6f046-a6af-11eb-b0db-acde48001122"]
+def approve_orders(id_dict):
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
-    for orderid in order_ids:
-        batch.add(SimpleStatement("update orders set status = 1 "
-                                  " where orderid = {} and userid = {} IF status = 0; ;".format(orderid, uid)))
+    for (uid, order_ids) in id_dict.items():
+        for orderid in order_ids:
+            batch.add(SimpleStatement("update orders set status = 1 "
+                                      " where orderid = {} and userid = {};".format(orderid, uid)))
     result = connection.execute(batch)
     return result
 

@@ -1,33 +1,33 @@
-{% extends 'admin.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
     <div class="w3-container">
         <h2>journey list</h2>
         <div class="w3-margin-top">
-            <p>total {{ journeys|length }} journeys</p>
+            <p>total {{orders|length }} journeys</p>
             <form>
                 <table width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13"
                        align="center"
                        id="table">
-                    <thead>
                     <tr>
-                        <th>Journey_ID</th>
-                        <th>Name</th>
-                        <th>Per-booking<input type="checkbox" name="book" onclick="AllCheck(this.form)"></th>
+                        <th><pre>OrderId</pre></th>
+                        <th>JourneyId</th>
+                        <th>UserId</th>
+                        <th>Status</th>
+                        <th>Approve<input type="checkbox" name="book" onclick="AllCheck(this.form)"></th>
 
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for journey in journeys %}
+                    {% for order in orders %}
                         <tr>
-                            <td>{{ journey.id }}</td>
-                            <td>{{ journey.name }}</td>
+                            <td>{{ order.orderid |safe}}</td>
+                            <td>{{ order.journeyid |safe}}</td>
+                             <td>{{ order.userid |safe}}</td>
+                            <td>{{ order.status |safe }}</td>
                             <td>
                                 <input type="checkbox" name="cbjourney">
                             </td>
                         </tr>
                     {% endfor %}
-                    </tbody>
                 </table>
                 <input type="submit" name="sbjourney" onclick="sendDataTo('table')">
             </form>
@@ -57,8 +57,8 @@
                         var tr = checkRow.parentNode.parentNode;
                         var tds = tr.cells;
                         var temp = new Array();
-                        temp[0] = tds[0].innerHTML;
-                        temp[1] = tds[1].innerHTML;
+                        temp[0] = tds[2].innerHTML;
+                        temp[1] = tds[0].innerHTML;
                         allData[num] = temp;
                         num++;
                     }
@@ -68,10 +68,10 @@
 
             $.ajax({
                 type: "POST",
-                url: "/book_journey",
+                url: "/management/booking/approve",
                 contentType: "application/json",
                 dataType: "json",
-                data: JSON.stringify({journeyList: allData}),
+                data: JSON.stringify({approvalList: allData}),
                 success: function () {
                     alert("ok");
                 },
