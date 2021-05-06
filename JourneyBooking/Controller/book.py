@@ -33,7 +33,7 @@ def my_journeys():
             counts[item["batchid"]] = len(l)
             l.append(item)
 
-    return render_template('myjourneys.html', orders=json.loads(json.dumps(python_object, indent=2)))
+    return render_template('myjourneys.html', orders=json.loads(json.dumps(l, indent=2)))
 
 
 @book.route('/book_journey', methods=['POST'], strict_slashes=False)

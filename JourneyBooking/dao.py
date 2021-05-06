@@ -5,7 +5,7 @@ from cassandra import ConsistencyLevel
 from cassandra.cluster import Cluster
 from cassandra.query import SimpleStatement, BatchStatement
 
-cluster = Cluster(['35.172.217.174'])
+cluster = Cluster(['18.207.249.168', '3.87.63.27','3.238.206.50', '54.242.60.190','52.91.41.155', '3.85.110.231'])
 connection = cluster.connect('group2')
 
 def jsonarray(results):
@@ -73,11 +73,10 @@ def cancel_orders(uid, order_ids):
     return result
 
 
-def approve_orders(id_dict):
+def approve_orders(uid, order_ids):
     batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
-    for (uid, order_ids) in id_dict.items():
-        for orderid in order_ids:
-            batch.add(SimpleStatement("update orders set status = 1 "
+    for orderid in order_ids:
+        batch.add(SimpleStatement("update orders set status = 1 "
                                       " where orderid = {} and userid = {};".format(orderid, uid)))
     result = connection.execute(batch)
     return result
